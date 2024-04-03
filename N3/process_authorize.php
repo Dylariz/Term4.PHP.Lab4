@@ -16,7 +16,16 @@ function verifyFile($filePath) {
 function getAllFiles() {
     $userFiles = [];
     $directory = './';
-    $files = glob($directory . '*.txt');
+    
+    $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory));
+    $files = array();
+    foreach ($iterator as $file) {
+        if ($file->isDir()) continue;
+        if (pathinfo($file->getFilename(), PATHINFO_EXTENSION) == 'txt') {
+            $files[] = $file->getPathname();
+        }
+    }
+    
     foreach ($files as $filePath) {
         if (verifyFile($filePath)) {
             $userFiles[] = [$filePath, explode("\n", file_get_contents($filePath))];
